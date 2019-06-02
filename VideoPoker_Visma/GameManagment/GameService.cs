@@ -17,15 +17,15 @@ namespace GameManagment
                     "\n1 - Start the game" +
                     "\n2 - Exit the game");
 
-                string answer = GetAnswer();
+                int answer = GetAnswer();
 
                 switch (answer)
                 {
-                    case "1":
+                    case 1:
                         InnerGameCycle();
                         break;
 
-                    case "2":
+                    case 2:
                         Console.WriteLine("Roger roger" +
                             "\nClosing the game");
                         exitTheGame = true;
@@ -77,11 +77,11 @@ namespace GameManagment
                         "\n1) Throw our some cards and get new ones" +
                         "\n2) Submit this as final score");
 
-                    string answer = GetAnswer();
+                    int answer = GetAnswer();
 
                     switch (answer)
                     {
-                        case "1":
+                        case 1:
                             if (!hasDrawnNewCards)
                             {
                                 ThrowingOutCards(ref cardsInHand, ref cardManagment, ref hasDrawnNewCards);
@@ -92,8 +92,9 @@ namespace GameManagment
                             }
                             break;
 
-                        case "2":
+                        case 2:
                             stopGameLoop = true;
+                            Finish(cardsInHand);
                             break;
 
                         default:
@@ -104,7 +105,7 @@ namespace GameManagment
                 }
                 if (hasDrawnNewCards)
                 {
-                    Finnish(cardsInHand);
+                    Finish(cardsInHand);
                     stopGameLoop = true;
                 }
                 
@@ -121,96 +122,81 @@ namespace GameManagment
             {
                 Console.WriteLine("Please, enter an amount of cards that you want to throw out" +
                     "\nWrite 0 if you want to get back");
-                string answer = GetAnswer();
+                int answer = GetAnswer();
 
-                if (Int32.TryParse(answer, out int throwOutAmount))
+                if (answer == 0)
                 {
-                    if (throwOutAmount == 0)
-                    {
-                        break;
-                    }
+                    break;
+                }
 
-                    else if (throwOutAmount> heldCards.Length)
-                    {
-                        Console.WriteLine("Sorry, but there are not that many cards");
-                    }
+                else if (answer > heldCards.Length)
+                {
+                    Console.WriteLine("Sorry, but there are not that many cards");
+                }
 
-                    else if (throwOutAmount<0)
-                    {
-                        Console.WriteLine("Sorry, but you can't throw out negative amount of cards");
-                    }
-
-                    else
-                    {
-
-                        hasPickedCards = true;
-                        cardsGotten = true;
-                        //if player wants to throw out all of the cards
-                        if (throwOutAmount == heldCards.Length)
-                        {
-                            for (int i = 0; i < heldCards.Length; i++)
-                            {
-                                heldCards[i] = cardManagment.TakeOutRandomCard();
-                            }
-                        }
-
-                        //when player wants to throw out some of the cards
-                        else
-                        {
-                            int[] pickedCardIndexes = new int[throwOutAmount];
-                            PrintOutCards(heldCards);
-
-                            for (int i = 0; i < throwOutAmount; i++)
-                            {
-                                Console.WriteLine("Select the number of the card that you want to be thrown out");
-
-                                answer = GetAnswer();
-
-                                if (Int32.TryParse(answer, out int index))
-                                {
-                                    if (index>0 && index<=heldCards.Length)
-                                    {
-
-                                        if (pickedCardIndexes.Contains(index - 1))
-                                        {
-                                            Console.WriteLine("Sorry but you have already entered this number");
-                                            i--;
-                                        }
-
-                                        else
-                                        {
-                                            pickedCardIndexes[i] = index - 1;
-                                        }
-                                    }
-
-                                    else
-                                    {
-                                        Console.WriteLine("There is no such card under this number");
-                                        i--;
-                                    }
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Sorry could not understand your answer");
-                                    i--;
-                                }
-
-
-                            }
-
-                            for (int i = 0; i < pickedCardIndexes.Length; i++)
-                            {
-                                heldCards[pickedCardIndexes[i]] = cardManagment.TakeOutRandomCard();
-                            }
-
-                        }
-                    }
+                else if (answer < 0)
+                {
+                    Console.WriteLine("Sorry, but selected amount is unavailable");
                 }
 
                 else
                 {
-                    Console.WriteLine("Your input was unclear" +
-                        "\n Please, try again");
+
+                    hasPickedCards = true;
+                    cardsGotten = true;
+                    //if player wants to throw out all of the cards
+                    if (answer == heldCards.Length)
+                    {
+                        for (int i = 0; i < heldCards.Length; i++)
+                        {
+                            heldCards[i] = cardManagment.TakeOutRandomCard();
+                        }
+                    }
+
+                    //when player wants to throw out some of the cards
+                    else
+                    {
+                        int[] pickedCardIndexes = new int[answer];
+                        PrintOutCards(heldCards);
+
+                        for (int i = 0; i < answer; i++)
+                        {
+                            Console.WriteLine("Select the number of the card that you want to be thrown out");
+
+                            answer = GetAnswer();
+
+
+                            if (answer > 0 && answer <= heldCards.Length)
+                            {
+
+                                if (pickedCardIndexes.Contains(answer - 1))
+                                {
+                                    Console.WriteLine("Sorry but you have already entered this number");
+                                    i--;
+                                }
+
+                                else
+                                {
+                                    pickedCardIndexes[i] = answer - 1;
+                                }
+                            }
+
+                            else
+                            {
+                                Console.WriteLine("There is no such card under this number");
+                                i--;
+                            }
+
+
+
+                        }
+
+                        for (int i = 0; i < pickedCardIndexes.Length; i++)
+                        {
+                            heldCards[pickedCardIndexes[i]] = cardManagment.TakeOutRandomCard();
+                        }
+
+                    }
                 }
 
                 if (cardsGotten) break;
@@ -219,13 +205,24 @@ namespace GameManagment
             
         }
 
-        private string GetAnswer()
+        private int GetAnswer()
         {
             Console.WriteLine("Please write your answer and press \"Enter\"");
-            return Console.ReadLine().Replace(" ", String.Empty);
+            int result;
+
+            if (Int32.TryParse(Console.ReadLine().Replace(" ", String.Empty), out int returnedInt))
+            {
+                result = returnedInt;
+            }
+
+            else
+            {
+                result = -1;
+            }
+            return result ;
         }
 
-        private void Finnish(Card [] cards)
+        private void Finish(Card [] cards)
         {
             ScoreCalculator scoreCalculator = new ScoreCalculator();
             int score = scoreCalculator.GetScore(cards);
