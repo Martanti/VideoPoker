@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GameManagment;
+﻿using GameManagment;
 
 namespace VideoPoker_Visma
 {
@@ -11,7 +6,7 @@ namespace VideoPoker_Visma
     {
         static void Main(string[] args)
         {
-            UIService uIService = new UIService();
+            GameService uIService = new GameService();
             uIService.StartGame();
 
         }

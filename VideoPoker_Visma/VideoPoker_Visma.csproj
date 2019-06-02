@@ -46,7 +46,7 @@
     <Compile Include="GameManagment\Card.cs" />
     <Compile Include="GameManagment\CardManagment.cs" />
     <Compile Include="GameManagment\ScoreCalculator.cs" />
-    <Compile Include="GameManagment\UIService.cs" />
+    <Compile Include="GameManagment\GameService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

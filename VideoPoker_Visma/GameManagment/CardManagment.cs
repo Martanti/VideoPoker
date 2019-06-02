@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameManagment
 {
-    class CardManagment
+    public class CardManagment
     {
+        //this is needed to ensure randomness
+        private Random random = new Random();
+
         private List<Card> availableCards;
 
         public CardManagment()
@@ -16,13 +16,16 @@ namespace GameManagment
         }
 
 
+        /// <summary>
+        /// Populates deck with automatically generated cards
+        /// </summary>
         public void PopulateDeck()
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < Card.amountOfSuits; i++)
             {
                 CardSymbol symbol = (CardSymbol)i;
 
-                for (int j = 0; j < 13; j++)
+                for (int j = 0; j < Card.amountOfRanks; j++)
                 {
                     CardRank rank = (CardRank)j;
 
@@ -35,11 +38,13 @@ namespace GameManagment
         }
 
 
+        /// <summary>
+        /// Get a randomly picked card from the deck
+        /// </summary>
+        /// <returns>Returns a Card type object that is also removed from the deck</returns>
         public Card TakeOutRandomCard()
         {
-            Random random = new Random();
-
-            int randomCardIndex =  random.Next(availableCards.Count);
+            int randomCardIndex = random.Next(availableCards.Count);
 
             Card cardToGiveOut = availableCards[randomCardIndex];
 
@@ -48,14 +53,5 @@ namespace GameManagment
             return cardToGiveOut;
         }
 
-        public bool CanDraw(int neededAmountToDraw)
-        {
-            if (neededAmountToDraw<=availableCards.Count)
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }
